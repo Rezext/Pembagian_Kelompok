@@ -1,4 +1,3 @@
-import { initializeApp } from "firebase/app";
 // Konfigurasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBA0kQTRed4MuEjqojRjC3J2LiQPl6JNaY",
@@ -326,4 +325,5 @@ async function deleteGroup(docId) {
     }
 
 }
+
 
