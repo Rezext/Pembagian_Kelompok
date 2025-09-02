@@ -36,8 +36,40 @@ h1 {
 h2 { color: #333; }
 p { color: #666; margin-bottom: 2rem; }
 
+.login-box {
+    margin-top: 1.5rem;
+}
+
+.login-box label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    text-align: left;
+    color: #495057;
+}
+
 .login-box input {
     margin-bottom: 1rem;
+}
+
+.login-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #aaa;
+    margin: 2rem 0 1rem 0;
+}
+.login-separator::before,
+.login-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+.login-separator:not(:empty)::before {
+    margin-right: .5em;
+}
+.login-separator:not(:empty)::after {
+    margin-left: .5em;
 }
 
 input, textarea, select {
@@ -66,8 +98,16 @@ button {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 1rem;
+    margin-top: 0; /* Adjusted */
     transition: background-color 0.3s, transform 0.2s;
+}
+
+button.viewer-button {
+    background-color: #6c757d;
+}
+
+button.viewer-button:hover {
+    background-color: #5a6268;
 }
 
 button:hover {
@@ -182,13 +222,14 @@ button:hover {
     background-color: #138496;
 }
 
-#saved-groups-list .saved-group-item {
+#saved-groups-list .saved-group-item, #viewer-groups-list .saved-group-item {
     background-color: #fff;
     border: 1px solid #dee2e6;
     border-radius: 8px;
     margin-bottom: 1.5rem;
     padding: 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    text-align: left;
 }
 .saved-group-header {
     padding-bottom: 1rem;
@@ -244,6 +285,12 @@ button:hover {
 .user-role a:hover {
     background-color: #dc3545;
     color: white;
+}
+.confess-list-container {
+    margin: 1.5rem 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
 .watermark {
