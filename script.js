@@ -1,11 +1,11 @@
 // Konfigurasi Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBA0kQTRed4MuEjqojRjC3J2LiQPl6JNaY",
-  authDomain: "swara-mpi-23b.firebaseapp.com",
-  projectId: "swara-mpi-23b",
-  storageBucket: "swara-mpi-23b.firebasestorage.app",
-  messagingSenderId: "639234057858",
-  appId: "1:639234057858:web:e375dd824a5e04ff96b69b"
+    apiKey: "AIzaSyBA0kQTRed4MuEjqojRjC3J2LiQPl6JNaY",
+    authDomain: "swara-mpi-23b.firebaseapp.com",
+    projectId: "swara-mpi-23b",
+    storageBucket: "swara-mpi-23b.firebasestorage.app",
+    messagingSenderId: "639234057858",
+    appId: "1:639234057858:web:f7d33bed0b79f21796b69b"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -51,7 +51,6 @@ function handleLogin() {
     document.getElementById('display-course').innerText = course;
     document.getElementById('display-lecturer').innerText = lecturer;
     
-    // Simpan info ke session storage agar tidak hilang saat refresh
     sessionStorage.setItem('groupInfo', JSON.stringify({ pj, course, lecturer }));
 
     showPage('main-app');
@@ -67,7 +66,6 @@ function logout() {
     showPage('login-page');
 }
 
-// Cek jika sudah login sebelumnya
 document.addEventListener('DOMContentLoaded', () => {
     const savedInfo = sessionStorage.getItem('groupInfo');
     if (savedInfo) {
@@ -91,13 +89,11 @@ function generateRandomGroups(method) {
         rija = membersToShuffle.splice(rijaIndex, 1)[0];
     }
 
-    // Acak anggota selain Rija
     for (let i = membersToShuffle.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [membersToShuffle[i], membersToShuffle[j]] = [membersToShuffle[j], membersToShuffle[i]];
     }
 
-    // Tempatkan Rija di posisi acak, tapi bukan di awal
     if (rija) {
         const randomIndex = Math.floor(Math.random() * (membersToShuffle.length - 1)) + 1;
         membersToShuffle.splice(randomIndex, 0, rija);
@@ -111,7 +107,7 @@ function generateRandomGroups(method) {
             return;
         }
         groups = divideIntoNChunks(membersToShuffle, numGroups);
-    } else { // byMemberCount
+    } else {
         const numMembers = parseInt(document.getElementById('num-members').value);
         if (!numMembers || numMembers <= 0) {
             alert("Masukkan jumlah anggota per kelompok yang valid.");
@@ -141,18 +137,15 @@ function divideIntoNChunks(array, n) {
     return result;
 }
 
-
 // --- FUNGSI PEMBAGIAN MANUAL ---
 function buildManualGroupUI() {
     const container = document.getElementById('manual-group-builder');
-    container.innerHTML = ''; // Kosongkan dulu
-    const availableMembers = [...memberNames];
-    
+    container.innerHTML = '';
     const div = document.createElement('div');
     div.className = 'manual-group';
     div.innerHTML = `<h4>Kelompok 1</h4>`;
     
-    availableMembers.forEach(member => {
+    memberNames.forEach(member => {
         div.innerHTML += `
             <input type="checkbox" id="manual-${member}-1" name="group-1" value="${member}">
             <label for="manual-${member}-1">${member}</label><br>
@@ -177,7 +170,6 @@ function addManualGroup() {
     });
     container.appendChild(div);
 }
-
 
 // --- FUNGSI TAMPILAN & SIMPAN ---
 function displayGroupResults(groups, containerId, showSaveButton) {
@@ -231,7 +223,6 @@ function saveManualGroups() {
     saveGroupsToFirebase(groups, 'Manual');
 }
 
-
 async function saveGroupsToFirebase(groups, method) {
     const groupInfo = JSON.parse(sessionStorage.getItem('groupInfo'));
     if (!groupInfo) {
@@ -239,10 +230,19 @@ async function saveGroupsToFirebase(groups, method) {
         return;
     }
     
+    // ## PERBAIKAN DI SINI ##
+    // Mengubah array of arrays menjadi array of objects (maps)
+    const transformedGroups = groups.map((memberArray, index) => {
+        return {
+            groupName: `Kelompok ${index + 1}`,
+            members: memberArray
+        };
+    });
+
     const payload = {
         ...groupInfo,
         method: method,
-        groups: groups,
+        groups: transformedGroups, // Menggunakan data yang sudah diubah
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
@@ -277,9 +277,11 @@ async function fetchSavedGroups() {
             const item = document.createElement('div');
             item.className = 'saved-group-item';
 
-            const groupCardsHTML = data.groups.map((group, index) => {
-                const membersHTML = group.map(m => `<li>${m}</li>`).join('');
-                return `<div class="group-card"><h3>Kelompok ${index+1}</h3><ul>${membersHTML}</ul></div>`;
+            // ## PERBAIKAN DI SINI ##
+            // Menyesuaikan cara membaca data dengan struktur baru
+            const groupCardsHTML = data.groups.map(groupObject => {
+                const membersHTML = groupObject.members.map(m => `<li>${m}</li>`).join('');
+                return `<div class="group-card"><h3>${groupObject.groupName}</h3><ul>${membersHTML}</ul></div>`;
             }).join('');
 
             item.innerHTML = `
@@ -318,12 +320,9 @@ async function deleteGroup(docId) {
     try {
         await db.collection('groupDivisions').doc(docId).delete();
         alert("Data berhasil dihapus.");
-        fetchSavedGroups(); // Refresh list
+        fetchSavedGroups();
     } catch (error) {
         console.error("Error deleting document: ", error);
         alert("Gagal menghapus data.");
     }
-
 }
-
-
