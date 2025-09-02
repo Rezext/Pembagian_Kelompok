@@ -15,6 +15,8 @@ const db = firebase.firestore();
 const memberNames = ["Ridwan", "Novi", "Rania", "Ranty", "Rifatun", "Mardiah", "Rosidah", "Rizkya", "Khadizah", "Uswatun", "Shofia", "Aulia", "Qosyairi", "Rijani", "Diana", "Elya", "Evy", "Gitalis", "Dayah", "Husna", "Ismi", "Lutfiah", "Qurratulaini", "Baichaki", "Islami", "Luthfi", "Royyan", "Nadia", "Ghina", "Nisrin", "Casilda", "Mihbali"];
 const correctPassword = "MPI_2023";
 const adminNIMs = ['230101050652', '230101050111', '230101050110', '230101050683'];
+const viewerNIMs = ['230101050102', '230101050110', '230101050111', '230101050112', '230101050113', '230101050114', '230101050115', '230101050273', '230101050274', '230101050275', '230101050276', '230101050277', '230101050651', '230101050652', '230101050665', '230101050666', '230101050667', '230101050669', '230101050670', '230101050672', '230101050674', '230101050675', '230101050676', '230101050678', '230101050679', '230101050680', '230101050681', '230101050683', '230101050764', '230101050765', '230101050766', '230101050768'];
+
 
 // --- FUNGSI TAMPILAN ---
 function showPage(pageId) {
@@ -28,7 +30,7 @@ function showTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById(`${tabName}-content`).classList.add('active');
     if (tabName === 'group-details') {
-        fetchSavedGroups();
+        fetchSavedGroups('saved-groups-list', true); // Admin view
     }
 }
 
@@ -39,7 +41,7 @@ function handleLogin() {
     const password = document.getElementById('password').value;
 
     if (!pj || !course || !lecturer) {
-        alert('Semua data harus diisi.');
+        alert('Semua data PJ harus diisi.');
         return;
     }
     if (password !== correctPassword) {
@@ -51,10 +53,21 @@ function handleLogin() {
     document.getElementById('display-course').innerText = course;
     document.getElementById('display-lecturer').innerText = lecturer;
     
-    sessionStorage.setItem('groupInfo', JSON.stringify({ pj, course, lecturer }));
+    sessionStorage.setItem('groupInfo', JSON.stringify({ pj, course, lecturer, role: 'admin' }));
 
     showPage('main-app');
     buildManualGroupUI();
+}
+
+function handleViewerLogin() {
+    const nim = document.getElementById('nim-viewer').value;
+    if (viewerNIMs.includes(nim)) {
+        sessionStorage.setItem('groupInfo', JSON.stringify({ role: 'viewer' }));
+        showPage('viewer-view');
+        fetchSavedGroups('viewer-groups-list', false); // Viewer view
+    } else {
+        alert('NIM tidak terdaftar. Silakan coba lagi.');
+    }
 }
 
 function logout() {
@@ -63,22 +76,27 @@ function logout() {
     document.getElementById('course-name').value = '';
     document.getElementById('lecturer-name').value = '';
     document.getElementById('password').value = '';
+    document.getElementById('nim-viewer').value = '';
     showPage('login-page');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const savedInfo = sessionStorage.getItem('groupInfo');
     if (savedInfo) {
-        const { pj, course, lecturer } = JSON.parse(savedInfo);
-        document.getElementById('display-pj').innerText = pj;
-        document.getElementById('display-course').innerText = course;
-        document.getElementById('display-lecturer').innerText = lecturer;
-        showPage('main-app');
-        buildManualGroupUI();
-        fetchSavedGroups();
+        const userInfo = JSON.parse(savedInfo);
+        if (userInfo.role === 'admin') {
+            document.getElementById('display-pj').innerText = userInfo.pj;
+            document.getElementById('display-course').innerText = userInfo.course;
+            document.getElementById('display-lecturer').innerText = userInfo.lecturer;
+            showPage('main-app');
+            buildManualGroupUI();
+            fetchSavedGroups('saved-groups-list', true);
+        } else if (userInfo.role === 'viewer') {
+            showPage('viewer-view');
+            fetchSavedGroups('viewer-groups-list', false);
+        }
     }
 });
-
 
 // --- FUNGSI PEMBAGIAN ACAK ---
 function generateRandomGroups(method) {
@@ -103,19 +121,16 @@ function generateRandomGroups(method) {
     if (method === 'byGroupCount') {
         const numGroups = parseInt(document.getElementById('num-groups').value);
         if (!numGroups || numGroups <= 0) {
-            alert("Masukkan jumlah kelompok yang valid.");
-            return;
+            alert("Masukkan jumlah kelompok yang valid."); return;
         }
         groups = divideIntoNChunks(membersToShuffle, numGroups);
     } else {
         const numMembers = parseInt(document.getElementById('num-members').value);
         if (!numMembers || numMembers <= 0) {
-            alert("Masukkan jumlah anggota per kelompok yang valid.");
-            return;
+            alert("Masukkan jumlah anggota per kelompok yang valid."); return;
         }
         groups = chunkArray(membersToShuffle, numMembers);
     }
-
     displayGroupResults(groups, 'random-result', true);
 }
 
@@ -144,12 +159,8 @@ function buildManualGroupUI() {
     const div = document.createElement('div');
     div.className = 'manual-group';
     div.innerHTML = `<h4>Kelompok 1</h4>`;
-    
     memberNames.forEach(member => {
-        div.innerHTML += `
-            <input type="checkbox" id="manual-${member}-1" name="group-1" value="${member}">
-            <label for="manual-${member}-1">${member}</label><br>
-        `;
+        div.innerHTML += `<input type="checkbox" id="manual-${member}-1" name="group-1" value="${member}"><label for="manual-${member}-1">${member}</label><br>`;
     });
     container.appendChild(div);
 }
@@ -161,12 +172,8 @@ function addManualGroup() {
     const div = document.createElement('div');
     div.className = 'manual-group';
     div.innerHTML = `<h4>Kelompok ${manualGroupCount}</h4>`;
-
     memberNames.forEach(member => {
-        div.innerHTML += `
-            <input type="checkbox" id="manual-${member}-${manualGroupCount}" name="group-${manualGroupCount}" value="${member}">
-            <label for="manual-${member}-${manualGroupCount}">${member}</label><br>
-        `;
+        div.innerHTML += `<input type="checkbox" id="manual-${member}-${manualGroupCount}" name="group-${manualGroupCount}" value="${member}"><label for="manual-${member}-${manualGroupCount}">${member}</label><br>`;
     });
     container.appendChild(div);
 }
@@ -196,79 +203,59 @@ function saveManualGroups() {
     const groups = [];
     const usedMembers = new Set();
     let isError = false;
-
-    for(let i=1; i<= manualGroupCount; i++){
+    for (let i = 1; i <= manualGroupCount; i++) {
         const groupMembers = [];
         const checkboxes = document.querySelectorAll(`input[name="group-${i}"]:checked`);
-        if(checkboxes.length === 0) continue;
-
+        if (checkboxes.length === 0) continue;
         checkboxes.forEach(cb => {
-            if(usedMembers.has(cb.value)){
+            if (usedMembers.has(cb.value)) {
                 alert(`Error: ${cb.value} sudah ada di kelompok lain!`);
                 isError = true;
             }
             groupMembers.push(cb.value);
             usedMembers.add(cb.value);
         });
-        if(isError) return;
+        if (isError) return;
         groups.push(groupMembers);
     }
-    
-    if(groups.length === 0){
-        alert("Anda belum membuat kelompok apapun.");
-        return;
+    if (groups.length === 0) {
+        alert("Anda belum membuat kelompok apapun."); return;
     }
-
     displayGroupResults(groups, 'manual-result', false);
     saveGroupsToFirebase(groups, 'Manual');
 }
 
 async function saveGroupsToFirebase(groups, method) {
     const groupInfo = JSON.parse(sessionStorage.getItem('groupInfo'));
-    if (!groupInfo) {
-        alert("Informasi PJ/Matkul tidak ditemukan. Silakan login ulang.");
-        return;
+    if (!groupInfo || groupInfo.role !== 'admin') {
+        alert("Informasi PJ/Matkul tidak ditemukan. Silakan login ulang."); return;
     }
-    
-    // ## PERBAIKAN DI SINI ##
-    // Mengubah array of arrays menjadi array of objects (maps)
-    const transformedGroups = groups.map((memberArray, index) => {
-        return {
-            groupName: `Kelompok ${index + 1}`,
-            members: memberArray
-        };
-    });
-
-    const payload = {
-        ...groupInfo,
-        method: method,
-        groups: transformedGroups, // Menggunakan data yang sudah diubah
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
+    const transformedGroups = groups.map((memberArray, index) => ({
+        groupName: `Kelompok ${index + 1}`,
+        members: memberArray
+    }));
+    const { role, ...payloadInfo } = groupInfo; // Hapus properti 'role' sebelum menyimpan
+    const payload = { ...payloadInfo, method, groups: transformedGroups, createdAt: firebase.firestore.FieldValue.serverTimestamp() };
 
     try {
         await db.collection('groupDivisions').add(payload);
         document.getElementById('thank-you-message').innerText = `Kelompok berhasil disimpan!`;
         showPage('thank-you-page');
-        setTimeout(() => {
-            showPage('main-app');
-            showTab('group-details');
-        }, 2000);
+        setTimeout(() => { showPage('main-app'); showTab('group-details'); }, 2000);
     } catch (error) {
         console.error("Error saving to Firebase: ", error);
         alert("Gagal menyimpan data. Coba lagi.");
     }
 }
 
-async function fetchSavedGroups() {
-    const container = document.getElementById('saved-groups-list');
+async function fetchSavedGroups(containerId, isAdmin) {
+    const container = document.getElementById(containerId);
     container.innerHTML = '<p>Memuat data...</p>';
 
     try {
         const snapshot = await db.collection('groupDivisions').orderBy('createdAt', 'desc').get();
         if (snapshot.empty) {
-            container.innerHTML = '<p>Belum ada data kelompok yang tersimpan.</p>';
-            return;
+            container.innerHTML = '<p>Belum ada data kelompok yang tersimpan.</p>'; return;
         }
 
         container.innerHTML = '';
@@ -277,8 +264,7 @@ async function fetchSavedGroups() {
             const item = document.createElement('div');
             item.className = 'saved-group-item';
 
-            // ## PERBAIKAN DI SINI ##
-            // Menyesuaikan cara membaca data dengan struktur baru
+            const deleteButtonHTML = isAdmin ? `<button class="delete-button" onclick="confirmDelete('${doc.id}', '${containerId}')">Hapus</button>` : '';
             const groupCardsHTML = data.groups.map(groupObject => {
                 const membersHTML = groupObject.members.map(m => `<li>${m}</li>`).join('');
                 return `<div class="group-card"><h3>${groupObject.groupName}</h3><ul>${membersHTML}</ul></div>`;
@@ -290,37 +276,33 @@ async function fetchSavedGroups() {
                         <h3>${data.course}</h3>
                         <p style="margin:0; font-size: 0.9em;">Dosen: ${data.lecturer} | PJ: ${data.pj} | Metode: ${data.method}</p>
                     </div>
-                    <button class="delete-button" onclick="confirmDelete('${doc.id}')">Hapus</button>
+                    ${deleteButtonHTML}
                 </div>
-                <div class="saved-group-body">
-                    ${groupCardsHTML}
-                </div>
-            `;
+                <div class="saved-group-body">${groupCardsHTML}</div>`;
             container.appendChild(item);
         });
-
     } catch (error) {
         console.error("Error fetching data: ", error);
         container.innerHTML = '<p>Gagal memuat data. Coba lagi nanti.</p>';
     }
 }
 
-function confirmDelete(docId) {
+function confirmDelete(docId, containerId) {
     const nim = prompt("Untuk menghapus, masukkan NIM Admin:");
     if (nim && adminNIMs.includes(nim)) {
         if (confirm("Apakah Anda yakin ingin menghapus data kelompok ini secara permanen?")) {
-            deleteGroup(docId);
+            deleteGroup(docId, containerId);
         }
     } else if (nim) {
         alert("NIM Admin tidak valid.");
     }
 }
 
-async function deleteGroup(docId) {
+async function deleteGroup(docId, containerId) {
     try {
         await db.collection('groupDivisions').doc(docId).delete();
         alert("Data berhasil dihapus.");
-        fetchSavedGroups();
+        fetchSavedGroups(containerId, true); // Refresh list
     } catch (error) {
         console.error("Error deleting document: ", error);
         alert("Gagal menghapus data.");
