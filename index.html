@@ -19,6 +19,14 @@
                 <input type="password" id="password" placeholder="Password">
                 <button onclick="handleLogin()">Lanjutkan</button>
             </div>
+
+            <div class="login-separator"><span>Atau</span></div>
+
+            <div class="login-box">
+                 <label for="nim-viewer">Login Untuk Melihat Hasil Kelompok:</label>
+                 <input type="text" id="nim-viewer" placeholder="Masukkan NIM Anda">
+                 <button class="viewer-button" onclick="handleViewerLogin()">Masuk</button>
+            </div>
         </div>
 
         <div id="main-app" class="page">
@@ -48,8 +56,7 @@
             </div>
 
             <div id="manual-division-content" class="tab-content">
-                <div id="manual-group-builder">
-                    </div>
+                <div id="manual-group-builder"></div>
                 <button class="action-button" onclick="addManualGroup()">Tambah Kelompok</button>
                 <button class="save-button" onclick="saveManualGroups()">Simpan Kelompok Manual</button>
                 <div id="manual-result" class="group-result-container"></div>
@@ -65,6 +72,16 @@
                 <a href="#" onclick="logout()">Logout</a>
             </div>
         </div>
+        
+        <div id="viewer-view" class="page">
+             <h2>Detail Kelompok Tersimpan</h2>
+             <div id="viewer-groups-list" class="confess-list-container">
+                 </div>
+             <div class="user-role">
+                 <a href="#" onclick="logout()">Logout</a>
+             </div>
+        </div>
+
          <div id="thank-you-page" class="page thank-you-page">
             <h2 id="thank-you-message">Terima Kasih!</h2>
         </div>
