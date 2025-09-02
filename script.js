@@ -1,11 +1,11 @@
 // Konfigurasi Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyBA0kQTRed4MuEjqojRjC3J2LiQPl6JNaY",
-    authDomain: "swara-mpi-23b.firebaseapp.com",
-    projectId: "swara-mpi-23b",
-    storageBucket: "swara-mpi-23b.firebasestorage.app",
-    messagingSenderId: "639234057858",
-    appId: "1:639234057858:web:f7d33bed0b79f21796b69b"
+  apiKey: "AIzaSyBA0kQTRed4MuEjqojRjC3J2LiQPl6JNaY",
+  authDomain: "swara-mpi-23b.firebaseapp.com",
+  projectId: "swara-mpi-23b",
+  storageBucket: "swara-mpi-23b.firebasestorage.app",
+  messagingSenderId: "639234057858",
+  appId: "1:639234057858:web:e375dd824a5e04ff96b69b"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -323,4 +323,5 @@ async function deleteGroup(docId) {
         console.error("Error deleting document: ", error);
         alert("Gagal menghapus data.");
     }
+
 }
