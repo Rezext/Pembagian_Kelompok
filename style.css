@@ -98,7 +98,7 @@ button {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 0; /* Adjusted */
+    margin-top: 0;
     transition: background-color 0.3s, transform 0.2s;
 }
 
@@ -238,22 +238,43 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap; /* Membantu di layar kecil */
+    gap: 1rem;
 }
 .saved-group-header h3 {
     margin: 0;
     color: #007bff;
 }
-.delete-button {
-    background-color: #e74c3c;
-    color: white;
+
+.header-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.delete-button, .download-button {
     width: auto;
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
     margin: 0;
 }
+
+.delete-button {
+    background-color: #e74c3c;
+    color: white;
+}
 .delete-button:hover {
     background-color: #c0392b;
 }
+
+.download-button {
+    background-color: #17a2b8;
+    color: white;
+}
+.download-button:hover {
+    background-color: #138496;
+}
+
+
 .saved-group-body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
