@@ -13,7 +13,7 @@ const db = firebase.firestore();
 const { jsPDF } = window.jspdf;
 
 // --- DATA ---
-const memberNames = ["Bukhoiri Ridwan", "Novi Amelia", "Rania Azira", "Ranty Selvia", "Rifatun Nisa Al-Adila", "Siti Mardiah", "Siti Rosidah", "Rizkya Nazwa", "Siti Khadizah", "Uswatun Hasanah", "Wardatushofia", "Zauharatul Aulia", "Akhmad Qosyairi", "Ahmad Rijani", "Diana Ahmad", "Elya Bidari", "Evy Noormala", "Gitalis Tamara Putri Mei Dina", "Hidayatun Ni'mah", "Husna Azizah", "Ismi Fitriani", "Lutfiah Putri Juta Lestari", "Muhammad Qurratulaini", "Muhammad Baichaki Maulana", "Muhammad Islami", "Muhammad Luthfi", "Muhammad Royyan Hidayat", "Nadia Ulfah", "Ghina Kamilah Arni", "Nisrin", "Casilda Imelia Sari", "Ahmad Mihbali", "Muhammad Jery Royfaldo", "Aulia Rahman"];
+const memberNames = ["Bukhoiri Ridwan", "Novi Amelia", "Rania Azira", "Ranty Selvia", "Rifatun Nisa Al-Adila", "Siti Mardiah", "Siti Rosidah", "Rizkya Nazwa", "Siti Khadizah", "Uswatun Hasanah", "Wardatushofia", "Zauharatul Aulia", "Akhmad Qosyairi", "Ahmad Rijani", "Diana Ahmad", "Elya Bidari", "Evy Noormala", "Gitalis Tamara Putri Mei Dina", "Hidayatun Ni'mah", "Husna Azizah", "Ismi Fitriani", "Lutfiah Putri Juta Lestari", "Muhammad Qurratulaini", "Muhammad Baichaki Maulana", "Muhammad Islami", "Muhammad Luthfi", "Muhammad Royyan Hidayat", "Nadia Ulfah", "Ghina Kamilah Arni", "Nisrin", "Casilda Imelia Sari", "Ahmad Mihbali", "Muhammad Jery Royfaldo"];
 const correctPassword = "MPI_2023";
 const adminNIMs = ['230101050652', '230101050111', '230101050110', '230101050683'];
 const viewerNIMs = ['230101050102', '230101050110', '230101050111', '230101050112', '230101050113', '230101050114', '230101050115', '230101050273', '230101050274', '230101050275', '230101050276', '230101050277', '230101050651', '230101050652', '230101050665', '230101050666', '230101050667', '230101050669', '230101050670', '230101050672', '230101050674', '230101050675', '230101050676', '230101050678', '230101050679', '230101050680', '230101050681', '230101050683', '230101050764', '230101050765', '230101050766', '230101050768', 'Dina Hermina', '230101050663', '220101050238'];
@@ -350,6 +350,7 @@ async function deleteGroup(docId, containerId) {
         alert("Gagal menghapus data.");
     }
 }
+
 
 
 
