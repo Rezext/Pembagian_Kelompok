@@ -100,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- FUNGSI PEMBAGIAN ACAK ---
 function generateRandomGroups(method) {
     let membersToShuffle = [...memberNames];
-    let groups = [];
     if (method === 'byGroupCount') {
         const numGroups = parseInt(document.getElementById('num-groups').value);
         if (!numGroups || numGroups <= 0) { alert("Masukkan jumlah kelompok yang valid."); return; }
@@ -339,6 +338,7 @@ async function deleteGroup(docId, containerId) {
         alert("Gagal menghapus data.");
     }
 }
+
 
 
 
