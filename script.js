@@ -271,7 +271,7 @@ function downloadGroupPDF(index) {
     }
 
     const doc = new jsPDF();
-    let y = 15; // Posisi vertikal awal
+    let y = 15;
 
     // Judul
     doc.setFontSize(18);
@@ -291,7 +291,7 @@ function downloadGroupPDF(index) {
 
     // Data Kelompok
     data.groups.forEach(group => {
-        if (y > 270) { // Jika mendekati akhir halaman, buat halaman baru
+        if (y > 270) {
             doc.addPage();
             y = 15;
         }
@@ -303,14 +303,14 @@ function downloadGroupPDF(index) {
         doc.setFontSize(11);
         doc.setFont(undefined, 'normal');
         group.members.forEach(member => {
-            if (y > 280) { // Halaman baru jika daftar anggota panjang
+            if (y > 280) { 
                  doc.addPage();
                  y = 15;
             }
             doc.text(`- ${member}`, 20, y);
             y += 7;
         });
-        y += 5; // Jarak antar kelompok
+        y += 5;
     });
 
     // Simpan file
@@ -339,6 +339,7 @@ async function deleteGroup(docId, containerId) {
         alert("Gagal menghapus data.");
     }
 }
+
 
 
 
