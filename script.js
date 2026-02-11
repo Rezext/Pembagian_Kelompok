@@ -100,6 +100,17 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- FUNGSI PEMBAGIAN ACAK ---
 function generateRandomGroups(method) {
     let membersToShuffle = [...memberNames];
+        const rijaIndex = membersToShuffle.indexOf("Ahmad Rijani");
+    let rija = null;
+    if (rijaIndex > -1) rija = membersToShuffle.splice(rijaIndex, 1)[0];
+    for (let i = membersToShuffle.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [membersToShuffle[i], membersToShuffle[j]] = [membersToShuffle[j], membersToShuffle[i]];
+    }
+    if (rija) {
+        const randomIndex = Math.floor(Math.random() * (membersToShuffle.length - 1)) + 1;
+        membersToShuffle.splice(randomIndex, 0, rija);
+    }
     if (method === 'byGroupCount') {
         const numGroups = parseInt(document.getElementById('num-groups').value);
         if (!numGroups || numGroups <= 0) { alert("Masukkan jumlah kelompok yang valid."); return; }
@@ -338,6 +349,7 @@ async function deleteGroup(docId, containerId) {
         alert("Gagal menghapus data.");
     }
 }
+
 
 
 
